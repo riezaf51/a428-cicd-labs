@@ -13,11 +13,18 @@ node {
         }
     }
 
+    stage('Manual Approval') {
+        input message: 'Lanjutkan ke tahap Deploy?'
+    }
+
     stage('Deploy') {
         def nodeContainer = docker.image('node:16-buster-slim')
         nodeContainer.inside('-p 3000:3000 --user root') {
             sh './jenkins/scripts/deliver.sh'
-            input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)'
+            
+            // Pause for a minute
+            sleep 60
+            
             sh './jenkins/scripts/kill.sh'
         }
     }
